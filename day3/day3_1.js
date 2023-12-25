@@ -1,5 +1,5 @@
-const readTextFileSync = require('./file_read.js');
-const split = require('./split.js');
+const readTextFileSync = require('../file_read.js');
+const split = require('../split.js');
 
 const input = readTextFileSync('./day3_input.txt')
 
@@ -27,9 +27,6 @@ function getSurroundingSquare(row, col) {
 
 function processDict() {
 	let sum = 0;
-	let resultDict = {}
-
-
 	for (let row in dict) {
 		let metNumber = false;
 		let surroundingSquares = []
@@ -39,17 +36,12 @@ function processDict() {
 			let value = dict[row][col];
 			if (isNaN(Number(value))) {
 				if (metNumber) {
-					const starCharacter = surroundingSquares.find((square) => {
-						return square.value === "*"
+					const hasCharacter = surroundingSquares.some((square) => {
+						return !/^[.\d]+$/.test(square.value);
 					})
-					
-					if (starCharacter) {
-						console.log('starCharacter', starCharacter)
-						if (!resultDict[`${starCharacter.rowIndex},${starCharacter.columnIndex}`]) {
-							resultDict[`${starCharacter.rowIndex},${starCharacter.columnIndex}`] = [numberString]
-						} else {
-							resultDict[`${starCharacter.rowIndex},${starCharacter.columnIndex}`].push(numberString)
-						}
+					if (hasCharacter) {
+						sum += Number(numberString);
+						console.log('number string', numberString)
 					}
 					metNumber = false;
 					numberString = "";
@@ -65,17 +57,6 @@ function processDict() {
 			}
 		}
 	}
-	//loop through resultDict
-	const filteredObj = Object.fromEntries(
-		Object.entries(resultDict).filter(([key, value]) => value.length === 2)
-	)
-	for (let key in filteredObj) {
-		sum += Number(filteredObj[key][0]) * Number(filteredObj[key][1])
-		console.log('calc', Number(filteredObj[key][0]) * Number(filteredObj[key][1]))
-	}
-
-	console.log('resultDict', resultDict)
-	console.log('filteredObj', filteredObj)
 	console.log('sum', sum)
 	return sum;
 }

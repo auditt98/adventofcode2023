@@ -1,5 +1,5 @@
-const readTextFileSync = require('./file_read.js');
-const split = require('./split.js');
+const readTextFileSync = require('../file_read.js');
+const split = require('../split.js');
 
 const input = readTextFileSync('./day2_input.txt')
 const regexGameId = /Game (\d{1,3})/
@@ -25,13 +25,22 @@ function extractNumbers(str, regex) {
 
 
 function calculateGameData(game) {
+	let gameId = 0;
+	const gameIdMatch = game.match(regexGameId)
+	if (gameIdMatch) {
+		gameId = Number(gameIdMatch[1])
+	}
 	const redCubes = extractNumbers(game, regexRed)
 	const blueCubes = extractNumbers(game, regexBlue)
 	const greenCubes = extractNumbers(game, regexGreen)
-	const biggestRed = Math.max(...redCubes)
-	const biggestBlue = Math.max(...blueCubes)
-	const biggestGreen = Math.max(...greenCubes)
-	return biggestRed * biggestBlue * biggestGreen
+
+	const redInvalid = redCubes.some(x => x > MAX_RED_CUBES)
+	const blueInvalid = blueCubes.some(x => x > MAX_BLUE_CUBES)
+	const greenInvalid = greenCubes.some(x => x > MAX_GREEN_CUBES)
+	if (redInvalid || blueInvalid || greenInvalid) {
+		return 0
+	}
+	return gameId;
 }
 
 function run() {

@@ -1,9 +1,8 @@
-const readTextFileSync = require('./file_read.js');
-const split = require('./split.js');
+const readTextFileSync = require('../file_read.js');
+const split = require('../split.js');
 
 const input = readTextFileSync('./day4_input.txt')
 const data = split(input, '\n');
-
 const regexWinningNumbers = /:(.+)\|/g
 const regexMyNumbers = /\|(.+)/g
 
@@ -12,37 +11,42 @@ function extractNumbers(str, regex) {
 	let matches = [];
 	
 	while ((match = regex.exec(str)) !== null) {
-			// The captured group is at index 1
 			matches.push(match[1]);
 	}
 	let result = matches[0].trim().split(' ').map(x => Number(x)).filter(x => x !== 0)
 	return result
 }
 
-function double(num) {
-	return num * 2
-}
-
-function calculatePoint(line) {
-	let point = 0;
+function calculateCardsWon(line) {
+	let cardsWon = 0
 	const winningNumbers = extractNumbers(line, regexWinningNumbers).reduce((a, v) => ({...a, [v]: v}), {})
 	const myNumbers = extractNumbers(line, regexMyNumbers)
 	myNumbers.forEach(number => {
 		if (winningNumbers[`${number}`]) {
-			point = point === 0 ? 1 : double(point)
+			cardsWon++
 		}
 	});
-	return point;
+	return cardsWon
 }
 
-
 function run() {
-	let result = 0
-	data.forEach((line) => {
-		result += calculatePoint(line)
+	const indexResult = []
+	const wonResult = []
+	const cardResult = []
+
+	data.forEach((line, index) => {
+		indexResult.push(index + 1)
+		cardResult.push(1)
+		wonResult.push(calculateCardsWon(line));
 	})
-	console.log('result', result)
-	return result;
+
+	for (let i = 0; i < wonResult.length; i++) {
+		const element = wonResult[i];
+		for (let j = i+1; j <= i + element; j++) {
+			cardResult[j] = cardResult[j] + cardResult[i]
+		}
+	}
+	console.log('total', cardResult.reduce((a, b) => a + b, 0))
 }
 
 run();

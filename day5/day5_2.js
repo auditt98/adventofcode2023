@@ -1,5 +1,5 @@
-const readTextFileSync = require('./file_read.js');
-const split = require('./split.js');
+const readTextFileSync = require('../file_read.js');
+const split = require('../split.js');
 
 const input = readTextFileSync('./day5_input.txt')
 const data = split(input, '\n');

@@ -1,4 +1,4 @@
-const readTextFileSync = require('./file_read.js');
+const readTextFileSync = require('../file_read.js');
 const input = readTextFileSync('./day1_input.txt')
 
 const acceptableDigits = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
