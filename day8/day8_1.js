@@ -1,32 +1,71 @@
 const readTextFileSync = require('../file_read.js');
 const split = require('../split.js');
 
-const input = readTextFileSync('./day8_input1.txt')
+const input = readTextFileSync('./day8_input.txt')
 const data = split(input, '\n');
 let instructions = [];
-// class Node {
-// 	constructor(value) {
-// 		this.value = value;
-// 		this.left = null;
-// 		this.right = null;
-// 	}
+const leftMap = {}
+const rightMap = {}
 
-// 	constructor(value, left, right) {
-// 		this.value = value;
-// 		this.left = left;
-// 		this.right = right;
-// 	}
-// }
+function prepareMap() {
+	for (let i = 2; i < data.length; i++) {
+		const splitted = data[i].split(' = ');
+		const startNode = splitted[0];
+		const endNode = splitted[1].replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').split(',');
+		leftMap[startNode] = endNode[0];
+		rightMap[startNode] = endNode[1];
+	}
+}
 
+function prepareInstruction() {
+	instructions = data[0].split('');
+}
 
 function prepare() {
-	instructions = data[0].split('');
-	for (let i = 2; i < data.length; i++) {
-		console.log('data[i]', data[i]);
+	prepareMap();
+	prepareInstruction();
+	console.log('leftMap', leftMap);
+	console.log("rightMap", rightMap);
+	console.log("instructions", instructions);
+}
+
+function translateInstruction(instruction, node) {
+	if (instruction === "L") {
+		return leftMap[node];
 	}
+	return rightMap[node];
+}
+
+function calculate() {
+	let steps = 0;
+	let stop = false;
+	let index = 0;
+	let currentNode = null;
+	while (!stop) {
+		if (currentNode === "ZZZ") {
+			stop = true;
+			continue;
+		}
+		if (index === instructions.length) {
+			index = 0;
+			continue;
+		}
+		const instruction = instructions[index];
+		if (steps === 0) {
+			currentNode = translateInstruction(instruction, "AAA");
+			steps++;
+		} else {
+			currentNode = translateInstruction(instruction, currentNode);
+			steps++;
+		}
+		index++;
+	}
+	console.log('steps', steps);
+	return steps;
 }
 
 function run() {
 	prepare();
+	calculate();
 }
 run();
